@@ -2,8 +2,8 @@ package com.alkemy.disney.service.imp;
 
 
 
-import com.alkemy.disney.dao.PersonageDTO;
-import com.alkemy.disney.dao.PersonageFiltersDTO;
+import com.alkemy.disney.dto.PersonageDTO;
+import com.alkemy.disney.dto.PersonageFiltersDTO;
 import com.alkemy.disney.entitys.EntityPersonage;
 
 import com.alkemy.disney.mapper.PersonageMapper;
@@ -12,7 +12,6 @@ import com.alkemy.disney.repository.specifications.PersonageSpecification;
 import com.alkemy.disney.service.PersonageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.tags.Param;
 
 import java.util.List;
 import java.util.Optional;

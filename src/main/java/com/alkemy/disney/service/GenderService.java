@@ -1,7 +1,7 @@
 package com.alkemy.disney.service;
 
 
-import com.alkemy.disney.dao.GenderDTO;
+import com.alkemy.disney.dto.GenderDTO;
 
 public interface GenderService {
 

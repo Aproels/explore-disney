@@ -2,9 +2,8 @@ package com.alkemy.disney.service;
 
 
 
-import com.alkemy.disney.dao.PersonageDTO;
+import com.alkemy.disney.dto.PersonageDTO;
 import com.alkemy.disney.entitys.EntityPersonage;
-import com.alkemy.disney.repository.PersonageRepository;
 
 import java.util.List;
 import java.util.Optional;

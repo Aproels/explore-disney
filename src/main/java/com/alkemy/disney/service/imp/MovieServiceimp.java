@@ -1,9 +1,9 @@
 package com.alkemy.disney.service.imp;
 
 
-import com.alkemy.disney.dao.MovieBasicDTO;
-import com.alkemy.disney.dao.MovieDTO;
-import com.alkemy.disney.dao.MovieFiltersDTO;
+import com.alkemy.disney.dto.MovieBasicDTO;
+import com.alkemy.disney.dto.MovieDTO;
+import com.alkemy.disney.dto.MovieFiltersDTO;
 import com.alkemy.disney.entitys.EntityMovie;
 import com.alkemy.disney.entitys.EntityPersonage;
 import com.alkemy.disney.mapper.MovieMapper;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 

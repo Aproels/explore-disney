@@ -1,9 +1,8 @@
 package com.alkemy.disney.control;
 
 
-import com.alkemy.disney.dao.MovieBasicDTO;
-import com.alkemy.disney.dao.MovieDTO;
-import com.alkemy.disney.dao.PersonageDTO;
+import com.alkemy.disney.dto.MovieBasicDTO;
+import com.alkemy.disney.dto.MovieDTO;
 import com.alkemy.disney.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping ("Peliculas")

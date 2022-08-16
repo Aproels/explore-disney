@@ -1,7 +1,7 @@
 package com.alkemy.disney.service.imp;
 
 
-import com.alkemy.disney.dao.GenderDTO;
+import com.alkemy.disney.dto.GenderDTO;
 import com.alkemy.disney.entitys.EntityGender;
 import com.alkemy.disney.mapper.GenderMapper;
 import com.alkemy.disney.repository.GenderRepository;

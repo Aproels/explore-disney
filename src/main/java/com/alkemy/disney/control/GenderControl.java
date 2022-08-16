@@ -1,7 +1,7 @@
 package com.alkemy.disney.control;
 
 
-import com.alkemy.disney.dao.GenderDTO;
+import com.alkemy.disney.dto.GenderDTO;
 import com.alkemy.disney.service.GenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

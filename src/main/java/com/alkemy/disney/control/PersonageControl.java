@@ -2,7 +2,7 @@ package com.alkemy.disney.control;
 
 
 
-import com.alkemy.disney.dao.PersonageDTO;
+import com.alkemy.disney.dto.PersonageDTO;
 import com.alkemy.disney.entitys.EntityPersonage;
 import com.alkemy.disney.mapper.PersonageMapper;
 import com.alkemy.disney.repository.PersonageRepository;

@@ -3,8 +3,8 @@ package com.alkemy.disney.mapper;
 
 
 
-import com.alkemy.disney.dao.MovieDTO;
-import com.alkemy.disney.dao.PersonageDTO;
+import com.alkemy.disney.dto.MovieDTO;
+import com.alkemy.disney.dto.PersonageDTO;
 import com.alkemy.disney.entitys.EntityPersonage;
 import com.alkemy.disney.repository.PersonageRepository;
 import org.springframework.beans.factory.annotation.Autowired;

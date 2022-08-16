@@ -1,6 +1,6 @@
 package com.alkemy.disney.mapper;
 
-import com.alkemy.disney.dao.GenderDTO;
+import com.alkemy.disney.dto.GenderDTO;
 import com.alkemy.disney.entitys.EntityGender;
 import org.springframework.stereotype.Component;
 

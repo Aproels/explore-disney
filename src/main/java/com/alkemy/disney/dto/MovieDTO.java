@@ -1,6 +1,5 @@
-package com.alkemy.disney.dao;
+package com.alkemy.disney.dto;
 
-import com.alkemy.disney.entitys.EntityPersonage;
 import lombok.Getter;
 import lombok.Setter;
 

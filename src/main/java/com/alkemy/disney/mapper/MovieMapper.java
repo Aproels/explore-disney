@@ -5,15 +5,14 @@ import com.alkemy.disney.dto.MovieBasicDTO;
 import com.alkemy.disney.dto.MovieDTO;
 import com.alkemy.disney.dto.PersonageDTO;
 import com.alkemy.disney.entitys.EntityMovie;
+import com.alkemy.disney.entitys.EntityPersonage;
 import com.alkemy.disney.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class MovieMapper {
@@ -23,79 +22,84 @@ public class MovieMapper {
 
     private MovieRepository movieRepository;
 
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-    public List<MovieDTO> MovieEntitySetToDtoList(List<EntityMovie> entities, boolean loadMovieSeries) {
-        List<MovieDTO> dtos= new ArrayList<>();
-        for(EntityMovie entity : entities){
-            dtos.add(this.MovieEntityToDto(entity, true));
+    public MovieBasicDTO MovieEntityToBasicDto(EntityMovie entity) {
+        MovieBasicDTO dto = new MovieBasicDTO();
+        dto.setImage(entity.getImage());
+        dto.setTitle(entity.getTitle());
+        dto.setCreationDate(entity.getCreationDate());
+        return dto;
+    }
+
+    public List<MovieBasicDTO> MovieEntitySetToBasicDtoList(Collection<EntityMovie> entities) {
+        List<MovieBasicDTO> dtos = new ArrayList<>();
+        for (EntityMovie entity : entities) {
+            dtos.add(MovieEntityToBasicDto(entity));
         }
         return dtos;
     }
 
 
-    public EntityMovie MovieDtoToEntity(MovieDTO movieDTO){
-        EntityMovie entityMovie= new  EntityMovie();
+    public EntityMovie MovieDtoToEntity(MovieDTO dto) {
+        EntityMovie entityMovie = new EntityMovie();
 
-        entityMovie.setFechaCreacion(movieDTO.getFechaCreacion());
-        entityMovie.setImagen(movieDTO.getImagen());
-        entityMovie.setTitulo(movieDTO.getTitulo());
-        entityMovie.setCalificacion(movieDTO.getCalificacion());
-        entityMovie.setIdgenero(movieDTO.getIdgenero());
-        //entityPersonage.setMovies(personageDTO.getMovies());
+
+        entityMovie.setId(dto.getId());
+        entityMovie.setTitle(dto.getTitle());
+        entityMovie.setImage(dto.getImage());
+        entityMovie.setGenderId(dto.getGenderId());
+        entityMovie.setCreationDate(LocalDate.parse(dto.getCreationDate(),formatter));
+        entityMovie.setScore(dto.getScore());
+        entityMovie.setGender(dto.getGender());
+        for (PersonageDTO personageDTO : dto.getPersonages()) {
+            EntityPersonage personage = personageMapper.PersonageDtoToEntity(personageDTO);
+
+            entityMovie.getPersonages().add(personage);
+
+        }
+
         return entityMovie;
     }
-    public MovieDTO MovieEntityToDto(EntityMovie entityMovie, boolean loadPersonages){
+
+    public MovieDTO MovieEntityToDto(EntityMovie entityMovie, boolean loadPersonages) {
         MovieDTO dto = new MovieDTO();
 
         dto.setId(entityMovie.getId());
-        dto.setTitulo(entityMovie.getTitulo());
-        dto.setImagen(entityMovie.getImagen());
-        dto.setIdgenero(entityMovie.getIdgenero());
-        dto.setFechaCreacion(entityMovie.getFechaCreacion().toString());
-        dto.setCalificacion(entityMovie.getCalificacion());
-        //cargar peliculas que estan linkeadas a personajes
+        dto.setTitle(entityMovie.getTitle());
+        dto.setImage(entityMovie.getImage());
+        dto.setGenderId(entityMovie.getGenderId());
+        dto.setCreationDate((entityMovie.getCreationDate().toString()));
+        dto.setScore(entityMovie.getScore());
+        dto.setGender(entityMovie.getGender());
 
-        if(loadPersonages){
-        List<PersonageDTO> personageDTO= this.personageMapper.PersonageEntityListToDtoList(entityMovie.getPersonages(), false);
-        dto.setPersonages(personageDTO);
+     if (loadPersonages) {
 
+            dto.setPersonages(personageMapper.PersonageEntitySetToDtoSet(entityMovie.getPersonages(), false));
 
         }
 
         return dto;
     }
-    public List<MovieDTO> MovieEntityListToDtoList(List<EntityMovie> entities,boolean loadPersonages) {
 
-        List<MovieDTO> dtos= new ArrayList<>();
-        for(EntityMovie entity : entities){
-            dtos.add(MovieEntityToDto(entity,loadPersonages));
+
+    public Set<MovieDTO> MovieEntitySetToDtoSet(Collection<EntityMovie> entities, boolean loadCharacters) {
+        Set<MovieDTO> dtos = new HashSet<>();
+        for (EntityMovie entity : entities) {
+            dtos.add(MovieEntityToDto(entity, loadCharacters));
         }
         return dtos;
     }
-    public EntityMovie MovieDtoToEntityUpdate(MovieDTO dto) {
-        Optional<EntityMovie> result= movieRepository.findById(dto.getId());
-        if(result.isPresent()){
-            EntityMovie entity= result.get();
-            entity.setImagen(dto.getImagen());
-            entity.setIdgenero(dto.getIdgenero());
-            entity.setTitulo(dto.getTitulo());
-            entity.setFechaCreacion(dto.getFechaCreacion());
-            entity.setCalificacion(dto.getCalificacion());
-            entity.setPersonages(entity.getPersonages());
 
-            return entity;
+   /* public List<MovieDTO> MovieEntitySetToDtoList(Collection<EntityMovie> entities, boolean loadCharacters) {
+        List<MovieDTO> dtos = new ArrayList<>();
+        for (EntityMovie entity : entities) {
+            dtos.add(MovieEntityToDto(entity, loadCharacters));
         }
-        return null;
+        return dtos;
     }
-    private LocalDate StringToLocalDate(String stringDate){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date =LocalDate.parse(stringDate,formatter);
-        return date;
+    */
 
-    }
-
-    public List<MovieBasicDTO> MovieEntitySetToBasicDtoList(List<EntityMovie> entities) {
-
-        return null;
-    }
 }
+
+

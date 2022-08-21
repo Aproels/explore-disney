@@ -3,22 +3,24 @@ package com.alkemy.disney.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashSet;
+
+import java.util.Set;
 
 @Getter
 @Setter
 public class PersonageDTO {
     private Long id;
 
-    private String imagen;
+    private String image;
 
-    private String nombre;
+    private String name;
 
-    private int edad;
+    private Long age;
 
-    private Double peso;
+    private Double weight;
 
-    private String historia;
+    private String history;
 
-    private List<MovieDTO> movies;
+    private Set<MovieDTO> movies= new HashSet<>();
 }

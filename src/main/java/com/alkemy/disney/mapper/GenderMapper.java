@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GenderMapper {
-    public EntityGender genderDAOtoEntity(GenderDTO genderDTO){
+    public EntityGender genderDtotoEntity(GenderDTO genderDTO){
         EntityGender entityGender= new EntityGender();
 
         entityGender.setNombre(genderDTO.getNombre());
@@ -16,14 +16,14 @@ public class GenderMapper {
         return entityGender;
     }
 
-    public GenderDTO genderEntitytoDao(EntityGender entity){
-        GenderDTO genderDTO = new GenderDTO();
-        genderDTO.setId(entity.getId());
-        genderDTO.setNombre(entity.getNombre());
-        genderDTO.setImagen(entity.getImagen());
+    public GenderDTO genderEntitytoDto(EntityGender entity){
+        GenderDTO genderDto = new GenderDTO();
+        genderDto.setId(entity.getId());
+        genderDto.setNombre(entity.getNombre());
+        genderDto.setImagen(entity.getImagen());
 
 
-        return genderDTO;
+        return genderDto;
 
 
     }

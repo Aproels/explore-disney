@@ -23,18 +23,18 @@ public class EntityPersonage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imagen;
+    private String image;
 
-    private String nombre;
+    private String name;
 
-    private int edad;
+    private Long age;
 
-    private Double peso;
+    private Double weight;
 
-    private String historia;
+    private String history;
 
     private boolean deleted= Boolean.FALSE;
-    @ManyToMany(mappedBy = "personages",cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "personages",cascade = CascadeType.MERGE)
     private List<EntityMovie> movies = new ArrayList<>();
 
 

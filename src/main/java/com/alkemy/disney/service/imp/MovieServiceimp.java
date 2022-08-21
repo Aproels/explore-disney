@@ -1,25 +1,45 @@
 package com.alkemy.disney.service.imp;
 
 
+
 import com.alkemy.disney.dto.MovieBasicDTO;
 import com.alkemy.disney.dto.MovieDTO;
 import com.alkemy.disney.dto.MovieFiltersDTO;
 import com.alkemy.disney.entitys.EntityMovie;
 import com.alkemy.disney.entitys.EntityPersonage;
+import com.alkemy.disney.exeption.ParameterNotFound;
 import com.alkemy.disney.mapper.MovieMapper;
 import com.alkemy.disney.repository.MovieRepository;
+import com.alkemy.disney.repository.PersonageRepository;
 import com.alkemy.disney.repository.specifications.MovieSpecification;
+import com.alkemy.disney.service.GenderService;
 import com.alkemy.disney.service.MovieService;
 import com.alkemy.disney.service.PersonageService;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static com.alkemy.disney.mapper.MovieMapper.formatter;
 
 @Service
 
 public class MovieServiceimp implements MovieService {
+
+    @Autowired
+    private GenderService genderService;
+
+    @Autowired
+
+    private PersonageRepository personageRepository;
+
 
     @Autowired
     private PersonageService personageService;
@@ -35,24 +55,22 @@ public class MovieServiceimp implements MovieService {
     private MovieRepository movieRepository;
 
     public MovieDTO getDetailsById(Long id){
-        Optional<EntityMovie> entity=this.movieRepository.findById(id);
-        if(entity.isPresent()){
-            MovieDTO dto= this.movieMapper.MovieEntityToDto(entity.get(),true);
-            return dto;
-        }
-        return null;
+      EntityMovie entity=getMovieEntityById(id);
+
+
+        return movieMapper.MovieEntityToDto(entity,true);
     }
 
-    public List<MovieDTO> getByFilters( String title, String creationDate, String gender, String order){
-        MovieFiltersDTO filtersDTO= new MovieFiltersDTO(title, creationDate, gender,order);
-        List<EntityMovie> entities = this.movieRepository.findAll(this.movieSpecification.getByFilters(filtersDTO));
-        List<MovieDTO> dtos= this.movieMapper.MovieEntitySetToDtoList(entities, false);
+    public List<MovieBasicDTO> getByFilters(String title, Long genderId, String order){
+        MovieFiltersDTO filtersDTO= new MovieFiltersDTO(title, genderId,order);
+        List<EntityMovie> entities = movieRepository.findAll(this.movieSpecification.getByFilters(filtersDTO));
+        List<MovieBasicDTO> basicDto= movieMapper.MovieEntitySetToBasicDtoList(entities);
 
-        return dtos;
+        return basicDto;
+
+
 
     }
-
-
 
     public MovieDTO save(MovieDTO movieDTO){
 
@@ -65,43 +83,95 @@ public class MovieServiceimp implements MovieService {
         return result;
     }
 
+    @Override
+    public List<MovieBasicDTO> getAll() {
+      List<EntityMovie> entities=movieRepository.findAll();
+      List<MovieBasicDTO> movieBasicDTOS= movieMapper.MovieEntitySetToBasicDtoList(entities);
 
+      return movieBasicDTOS;
+    }
 
     public void delete(Long id){
+        EntityMovie movie = getMovieEntityById(id);
 
-        movieRepository.deleteById(id);
+
+        movieRepository.delete(movie);
     }
 
-
-    public List<MovieBasicDTO> getAllMovie() {
-
-        List<EntityMovie> entities = movieRepository.findAll();
-        List<MovieBasicDTO> resultBasic= movieMapper.MovieEntitySetToBasicDtoList(entities);
-
-        return resultBasic;
-
-    }
-
-    @Override
     public MovieDTO update(Long id, MovieDTO movieDTO) {
-        return null;
+        EntityMovie movie = getMovieEntityById(id);
+
+        //sin los "if" cada vez que se actualizaba un solo parametro,se volvian nulos los demas
+        if(!StringUtils.hasLength(movieDTO.getTitle())){
+            movie.setTitle(movie.getTitle());
+            }else{
+            movie.setTitle(movieDTO.getTitle());
+        }
+
+        if(!StringUtils.hasLength(movieDTO.getImage())){
+            movie.setImage(movie.getImage());
+            }else{
+            movie.setImage(movieDTO.getImage());
+        }
+
+        if(movieDTO.getScore() ==null){
+            movie.setScore(movie.getScore());
+        }else {
+            movie.setScore(movieDTO.getScore());
+
+        }
+
+       // movieMapper.StringToLocalDate(movieDTO.getCreationDate());
+
+        /* if(String.valueOf(LocalDate.parse(movieDTO.getCreationDate()))==null){
+            movie.setCreationDate(LocalDate.parse(String.valueOf(movie.getCreationDate())));
+        }else{
+            movie.setCreationDate(movieMapper.StringToLocalDate(movieDTO.getCreationDate()));
+        }
+
+         */
+
+
+
+
+
+        movieRepository.save(movie);
+        return movieMapper.MovieEntityToDto(movie, true);
     }
 
-    public void removePersonage(Long id, Long idPersonage){
-        EntityMovie movieEntity= this.movieRepository.getById(id);
-        movieEntity.getPersonages().size();
+    public MovieDTO removePersonage(Long movieId, Long personageId){
+        EntityMovie movieEntity= getMovieEntityById(movieId);
+        EntityPersonage entityPersonage=getPersonageEntityById(personageId);
 
-        EntityPersonage entityPersonage= this.personageService.getEntityById(idPersonage);
         movieEntity.removePersonage(entityPersonage);
-        this.movieRepository.save(movieEntity);
-    }
-    public void addPersonage(Long id, Long idPersonage){
-        EntityMovie movieEntity= this.movieRepository.getById(id);
-        movieEntity.getPersonages().size();
 
-        EntityPersonage entityPersonage= this.personageService.getEntityById(idPersonage);
-        movieEntity.addPersonage(entityPersonage);
-        this.movieRepository.save(movieEntity);
+
+        movieRepository.save(movieEntity);
+        return movieMapper.MovieEntityToDto(movieEntity,true);
     }
+    public MovieDTO addPersonage(Long movieId, Long personageId){
+        EntityMovie movieEntity= getMovieEntityById(movieId);
+
+        EntityPersonage entityPersonage=getPersonageEntityById(personageId);
+        movieEntity.addPersonage(entityPersonage);
+        movieRepository.save(movieEntity);
+
+        return movieMapper.MovieEntityToDto(movieEntity,true);
+    }
+    private EntityMovie getMovieEntityById(Long id) {
+        Optional<EntityMovie> movie = movieRepository.findById(id);
+        if(movie.isEmpty()){
+            throw new ParameterNotFound("ID No valido");
+        }
+        return movie.get();
+    }
+    private EntityPersonage getPersonageEntityById(Long id) {
+        Optional<EntityPersonage> personage = personageRepository.findById(id);
+        if(personage.isEmpty()){
+            throw new ParameterNotFound("ID No valido");
+        }
+        return personage.get();
+    }
+
 
 }

@@ -7,18 +7,31 @@ import com.alkemy.disney.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping ("Peliculas")
+@RequestMapping ("Movies")
 public class MovieControl {
     @Autowired
     private MovieService movieService;
 
+/*
+    @GetMapping
+    public ResponseEntity <List<MovieBasicDTO>> getAll(){
+
+        List<MovieBasicDTO> basicDto=movieService.getAll();
+
+        return ResponseEntity.ok(basicDto);
+
+    }
+*/
+
     @GetMapping("/{id}")
-    public ResponseEntity<MovieDTO> getDetailsById(@PathVariable Long id){
+    public ResponseEntity<MovieDTO> getDetailsById(@Valid @PathVariable Long id){
          MovieDTO movie=this.movieService.getDetailsById(id);
         return ResponseEntity.ok(movie);
     }
@@ -26,43 +39,29 @@ public class MovieControl {
 
 
     @GetMapping
-    public ResponseEntity<List<MovieDTO>> getDetailsByFilters(
+    public ResponseEntity<List<MovieBasicDTO>> getDetailsByFilters(
 
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String creationDate,
-            @RequestParam(required = false)  String genero,
+            @RequestParam(required = false) Long genderId,
             @RequestParam(required = false, defaultValue = "ASC") String order
-
     ) {
-
-      List<MovieDTO> movies = this.movieService.getByFilters(title, creationDate, genero, order);
-
-     return ResponseEntity.ok(movies);
-
+        List<MovieBasicDTO> movies = movieService.getByFilters(title, genderId, order);
+        return ResponseEntity.ok(movies);
 
     }
 
-    @GetMapping("/All")
-    public ResponseEntity<List<MovieBasicDTO>> getAll(){
-
-        List<MovieBasicDTO> movies = movieService.getAllMovie();
 
 
-        return ResponseEntity.ok().body(movies);
-    }
-
-
-
-    @PostMapping("/Create")
-    public ResponseEntity<MovieDTO> save(@RequestBody MovieDTO movieDTO){
+    @PostMapping()
+    public ResponseEntity<MovieDTO> save(@Valid @RequestBody MovieDTO movieDTO){
 
         MovieDTO movieSaved = movieService.save(movieDTO);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(movieSaved);
     }
-    @PutMapping("/Update/{id}")
-    public ResponseEntity<MovieDTO> update(@PathVariable("id") Long id, @RequestBody MovieDTO movieDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<MovieDTO> update( @PathVariable("id") Long id, @RequestBody MovieDTO movieDTO) {
 
         MovieDTO movieUpdated = movieService.update(id,movieDTO);
 
@@ -71,24 +70,24 @@ public class MovieControl {
 
     }
 
-    @DeleteMapping("/Delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.movieService.delete(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@Valid @PathVariable Long id) {
+        movieService.delete(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/{id}/personages/{idpersonages}")
-    public ResponseEntity<Void> addPersonage(@PathVariable Long id, @PathVariable Long idPersonage){
+    @PostMapping("/{MovieId}/personages/{PersonagesId}")
+    public ResponseEntity<MovieDTO> addPersonage(@Valid @PathVariable Long movieId, @PathVariable Long personageId){
 
-        this.movieService.addPersonage(id,idPersonage);
+        this.movieService.addPersonage(movieId,personageId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/{id}/personages/{idpersonages}")
-    public ResponseEntity<Void> removePersonage(@PathVariable Long id, @PathVariable Long idPersonage){
+    @DeleteMapping("/{id}/Personages/{PersonagesId}")
+    public ResponseEntity<MovieDTO> removePersonage(@PathVariable Long movieId, @PathVariable Long personageId){
 
-        this.movieService.removePersonage(id,idPersonage);
+        this.movieService.removePersonage(movieId,personageId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

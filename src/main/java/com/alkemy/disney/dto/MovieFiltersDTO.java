@@ -15,24 +15,23 @@ public class MovieFiltersDTO {
 
     private String title;
 
-    private String creationDate;
 
 
-    private String gender;
+
+    private  Long genderId;
 
     private String order;
 
-    public MovieFiltersDTO(String title, String creationDate, String gender, String order) {
+    public MovieFiltersDTO(String title, Long genderId, String order) {
 
         this.title = title;
-        this.creationDate = creationDate;
-
-        this.gender = gender;
+        this.genderId = genderId;
         this.order = order;
 
     }
 
     public boolean isASC() {
+
         return this.order.compareToIgnoreCase("ASC") == 0;
     }
 

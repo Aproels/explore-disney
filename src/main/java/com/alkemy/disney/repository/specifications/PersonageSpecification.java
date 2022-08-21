@@ -7,6 +7,7 @@ import com.alkemy.disney.entitys.EntityPersonage;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Expression;
@@ -29,40 +30,47 @@ public class PersonageSpecification {
             if(StringUtils.hasLength((filtersDTO.getName()))){
                 predicates.add(
                         criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("nombre")),
+                                criteriaBuilder.lower(root.get("name")),
                                 "%" + filtersDTO.getName().toLowerCase() + "%"
                         )
                 );
 
             }
-            if(StringUtils.hasLength(valueOf(filtersDTO.getAge()))){
+            if(!ObjectUtils.isEmpty(filtersDTO.getAge())){
+                Long  age = filtersDTO.getAge();
+
                 predicates.add(
 
-                        criteriaBuilder.equal(root.get("edad"),filtersDTO.getAge())
+                        criteriaBuilder.equal(root.get("age"),age)
 
-                        );
+                );
+
+
+            }
+            if(!ObjectUtils.isEmpty(filtersDTO.getWeight())){
+                Double weight = filtersDTO.getWeight();
+
+                predicates.add(
+
+                        criteriaBuilder.equal(root.get("weight"),weight)
+
+                );
 
 
             }
 
-            if(!CollectionUtils.isEmpty(filtersDTO.getMovies())){
+
+            if(!ObjectUtils.isEmpty(filtersDTO.getMoviesId())){
                 Join<EntityMovie, EntityPersonage> join= root.join("movies", JoinType.INNER);
-               //TODO: movieSeriesID puede estar mal
                 Expression<String> moviesId = join.get("id");
-                predicates.add(moviesId.in(filtersDTO.getMovies()));
+                predicates.add(moviesId.in(filtersDTO.getMoviesId()));
 
             }
 
             //remover duplicados
             query.distinct(true);
 
-            //ordenar
-            String orderByField= "nombre";
-            query.orderBy(
-                    filtersDTO.isASC()?
-                            criteriaBuilder.asc(root.get(orderByField)):
-                            criteriaBuilder.desc(root.get(orderByField))
-            );
+
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 

@@ -2,20 +2,25 @@ package com.alkemy.disney.service.imp;
 
 
 
+import com.alkemy.disney.dto.PersonageBasicDTO;
 import com.alkemy.disney.dto.PersonageDTO;
 import com.alkemy.disney.dto.PersonageFiltersDTO;
 import com.alkemy.disney.entitys.EntityPersonage;
 
+import com.alkemy.disney.exeption.ParameterNotFound;
 import com.alkemy.disney.mapper.PersonageMapper;
 import com.alkemy.disney.repository.PersonageRepository;
 import com.alkemy.disney.repository.specifications.PersonageSpecification;
 import com.alkemy.disney.service.PersonageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.lang.String.valueOf;
 
 @Service
 public class PersonageServiceimp implements PersonageService {
@@ -29,22 +34,16 @@ public class PersonageServiceimp implements PersonageService {
     @Autowired
     private PersonageSpecification personageSpecification;
 
-    public List<PersonageDTO> getByFilters(String name, Long age, Long weight, Set<Long> movieSeries, String order){
-        PersonageFiltersDTO filtersDTO= new  PersonageFiltersDTO(name, age, weight, movieSeries, order);
+
+
+    public List<PersonageBasicDTO> getDetailsByFilters(String name, Long age, Double weight, Set<Long> movies) {
+        PersonageFiltersDTO filtersDTO= new  PersonageFiltersDTO(name, age, weight, movies);
         List<EntityPersonage> entities = this.personageRepository.findAll(this.personageSpecification.getByFilters(filtersDTO));
-        List<PersonageDTO> dtos= this.personageMapper.PersonageEntitySetToDtoList(entities, false);
-
-    return dtos;
-
-    }
+        List<PersonageBasicDTO> basicDto=personageMapper.PersonageEntitySetToBasicDtoList(entities);
 
 
-    public List<PersonageDTO> getAllPersonages() {
+        return basicDto;
 
-        List<EntityPersonage> entities = personageRepository.findAll();
-        List<PersonageDTO> result= personageMapper.PersonageEntityListToDtoList(entities, true);
-
-        return result;
     }
 
     public PersonageDTO save(PersonageDTO personageDTO){
@@ -55,44 +54,74 @@ public class PersonageServiceimp implements PersonageService {
 
         PersonageDTO result= personageMapper.PersonageEntityToDto(entitySaved,true);
 
-        return result;
+
+
+        return  result;
     }
 
     public void delete(Long id){
+        EntityPersonage personage = getPersonageEntityById(id);
 
-        personageRepository.deleteById(id);
+
+        personageRepository.delete(personage);
     }
 
 
-    public Optional<EntityPersonage> findById(Long id) {
+    public PersonageDTO getById(Long id) {
+        EntityPersonage entity =  getPersonageEntityById(id);
 
+        return personageMapper.PersonageEntityToDto(entity, true);
 
-        return personageRepository.findById(id);
     }
 
+    public PersonageDTO update(Long id,PersonageDTO personageDTO) {
+        EntityPersonage personage = getPersonageEntityById(id);
 
- public PersonageDTO update(Long id,PersonageDTO personageDTO) {
+        //sin los "if" cada vez que se actualizaba un solo parametro,se volvian nulos los demas
+        if(!StringUtils.hasLength(personageDTO.getName())){
+        personage.setName(personage.getName());
+            }else{
+                personage.setName(personageDTO.getName());
+                }
 
-     Optional<EntityPersonage> entity = this.personageRepository.findById(id);
-     if (entity.isPresent()) {
-         PersonageDTO dto = this.personageMapper.PersonageEntityToDto(entity.get(), true);
-         dto.setImagen(personageDTO.getImagen());
-         dto.setHistoria(personageDTO.getHistoria());
-         dto.setNombre(personageDTO.getNombre());
-         dto.setPeso(personageDTO.getPeso());
-         dto.setEdad(personageDTO.getEdad());
-         personageMapper.PersonageDtoToEntity(dto);
+        if(!StringUtils.hasLength(personageDTO.getImage())){
+            personage.setImage(personage.getImage());
+            }else{
+            personage.setImage(personageDTO.getImage());
+            }
 
-         return dto;
+        if(!StringUtils.hasLength(personageDTO.getHistory())){
+            personage.setHistory(personage.getHistory());
+            }else{
+            personage.setHistory(personageDTO.getHistory());
+        }
 
+        if(personageDTO.getAge() ==null){
+            personage.setAge(personage.getAge());
+             }else {
+             personage.setAge(personageDTO.getAge());
+
+         }
+
+        if(personageDTO.getWeight()==null){
+             personage.setWeight(personage.getWeight());
+            }else{
+             personage.setWeight(personageDTO.getWeight());
+
+         }
+
+        personageRepository.save(personage);
+
+
+        return personageMapper.PersonageEntityToDto(personage, true);
      }
-     return null;
- }
 
-
-    @Override
-    public EntityPersonage getEntityById(Long idPersonage) {
-        return null;
+    private EntityPersonage getPersonageEntityById(Long id) {
+        Optional<EntityPersonage> personage = personageRepository.findById(id);
+        if (personage.isEmpty()) {
+            throw new ParameterNotFound("ID No valido");
+        }
+        return personage.get();
     }
 
 }

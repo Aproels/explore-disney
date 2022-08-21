@@ -2,18 +2,21 @@ package com.alkemy.disney.control;
 
 
 
+import com.alkemy.disney.dto.PersonageBasicDTO;
 import com.alkemy.disney.dto.PersonageDTO;
-import com.alkemy.disney.entitys.EntityPersonage;
+
 import com.alkemy.disney.mapper.PersonageMapper;
 import com.alkemy.disney.repository.PersonageRepository;
 import com.alkemy.disney.service.PersonageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
+
 import java.util.Set;
 
 @RestController
@@ -28,16 +31,16 @@ public class PersonageControl {
     private PersonageRepository personageRepository;
 
     @GetMapping
-    public ResponseEntity<List<PersonageDTO>> getDetailsByFilters(
+    public ResponseEntity<List<PersonageBasicDTO>> getDetailsByFilters(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long age,
-            @RequestParam(required = false) Long weight,
-            @RequestParam(required = false) Set<Long> movieSeries,
-            @RequestParam(required = false, defaultValue = "ASC") String order
+            @RequestParam(required = false) Double weight,
+            @RequestParam(required = false) Set<Long> moviesId
+
 
     ) {
 
-        List<PersonageDTO> personage = this.personageService.getByFilters(name, age, weight, movieSeries, order);
+        List<PersonageBasicDTO> personage =personageService.getDetailsByFilters(name, age, weight, moviesId);
 
         return ResponseEntity.ok(personage);
 
@@ -45,45 +48,37 @@ public class PersonageControl {
     }
 
 
-    @GetMapping("/All")
-    public ResponseEntity<List<PersonageDTO>> getAll() {
 
-        List<PersonageDTO> allPersonages = personageService.getAllPersonages();
-
-
-        return ResponseEntity.ok().body(allPersonages);
-    }
-
-
-    @PostMapping("/Create")
-    public ResponseEntity<PersonageDTO> save(@RequestBody PersonageDTO personageDTO) {
+    @PostMapping()
+    public ResponseEntity<PersonageDTO> save(@Valid @RequestBody PersonageDTO personageDTO) {
 
         PersonageDTO personageSaved = personageService.save(personageDTO);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(personageSaved);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonageDTO> getById(@Valid@PathVariable("id") Long id) {
+
+        PersonageDTO personage = personageService.getById(id);
 
 
-    @DeleteMapping("/Delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.personageService.delete(id);
+        return ResponseEntity.ok().body(personage);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@Valid@PathVariable Long id) {
+        personageService.delete(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 
-    @GetMapping("/Buscar/{id}")
-    public ResponseEntity<Optional<EntityPersonage>> getPersonage(@PathVariable("id") Long id) {
-
-        Optional<EntityPersonage> personages = personageService.findById(id);
 
 
-        return ResponseEntity.ok().body(personages);
-    }
-
-    @PutMapping("/Update/{id}")
-    public ResponseEntity<PersonageDTO> update(@PathVariable("id") Long id, @RequestBody PersonageDTO personageDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonageDTO> update(@Valid@PathVariable("id") Long id, @RequestBody PersonageDTO personageDTO) {
 
         PersonageDTO personageSaved = personageService.update(id,personageDTO);
 

@@ -4,6 +4,7 @@ import com.alkemy.disney.dto.MovieFiltersDTO;
 import com.alkemy.disney.entitys.EntityMovie;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
@@ -23,33 +24,20 @@ public class MovieSpecification {
             if(StringUtils.hasLength((filtersDTO.getTitle()))){
                 predicates.add(
                         criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("titulo")),
+                                criteriaBuilder.lower(root.get("title")),
                                 "%" + filtersDTO.getTitle().toLowerCase() + "%"
                         )
                 );
 
             }
-            if(StringUtils.hasLength(filtersDTO.getCreationDate())){
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate date = LocalDate.parse(filtersDTO.getCreationDate(),formatter);
-
-
+            if(!ObjectUtils.isEmpty(filtersDTO.getGenderId())) {
+                Long genderId = filtersDTO.getGenderId();
                 predicates.add(
 
-                        criteriaBuilder.equal(root.<LocalDate>get("fechaCreacion"),date)
+                        criteriaBuilder.equal(root.get("genderId"),genderId
+                                //"%" + filtersDTO.getGenderId() + "%")
 
-                );
-
-
-            }
-            if(StringUtils.hasLength((filtersDTO.getGender()))){
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("gender")),
-                                "%" + filtersDTO.getGender().toLowerCase() + "%"
-                        )
-                );
-
+                ));
             }
 
 
@@ -58,7 +46,7 @@ public class MovieSpecification {
             query.distinct(true);
 
             //ordenar
-            String orderByField= "fechaCreacion";
+            String orderByField= "creationDate";
             query.orderBy(
                     filtersDTO.isASC()?
                             criteriaBuilder.asc(root.get(orderByField)):

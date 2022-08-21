@@ -7,19 +7,20 @@ import java.util.List;
 
 public interface MovieService {
 
-   List<MovieDTO> getByFilters( String title, String creationDate, String gender,String order);
+   List<MovieBasicDTO> getByFilters( String title,Long genderId,String order);
 
    MovieDTO save(MovieDTO movieDTO);
+
+   List<MovieBasicDTO> getAll();
 
     MovieDTO getDetailsById(Long id);
 
 
    void delete(Long id);
 
-   List<MovieBasicDTO> getAllMovie();
 
    MovieDTO update(Long id, MovieDTO movieDTO);
 
-   void addPersonage(Long id,Long idPersonage);
-   void removePersonage(Long id,Long idPersonage);
+   MovieDTO addPersonage(Long movieId,Long personageId);
+   MovieDTO removePersonage(Long movieId,Long personageId);
 }

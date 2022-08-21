@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name="GENERO")
+@Table(name="GENDER")
 @Getter
 @Setter
 @ToString
@@ -22,11 +22,10 @@ public class EntityGender {
 
     private String imagen;
 
-    @OneToMany(mappedBy = "gender",fetch =  FetchType.LAZY)
+    //@OneToMany(mappedBy = "gender",fetch =  FetchType.LAZY)
 
-    private List<EntityMovie> movieserie;
-
-
+    //private List<EntityMovie> movieserie;
 
 
-}
+
+    }

@@ -1,9 +1,15 @@
 package com.alkemy.disney.dto;
 
+import com.alkemy.disney.entitys.EntityGender;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashSet;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -11,16 +17,20 @@ import java.util.List;
 public class MovieDTO {
     private Long id;
 
-    private String imagen;
+    private String image;
 
-    private String titulo;
+    private String title;
+    //@DateTimeFormat(pattern = "yyyy/MM/dd")
+    private String creationDate;
 
-    private String fechaCreacion;
+    private Integer score;
 
-    private int calificacion;
+    private Long genderId;
 
-   private Long idgenero;
+    private EntityGender gender;
 
-    private List<PersonageDTO> personages;
+    private Set<PersonageDTO> personages= new HashSet<>();
+
+
 
 }

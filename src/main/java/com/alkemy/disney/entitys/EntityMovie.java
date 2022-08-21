@@ -10,16 +10,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
-@Table(name= "PELICULAS")
+@Table(name= "MOVIES")
 @Getter
 @Setter
-@SQLDelete(sql= "Update PELICULAS SET deleted = true WHERE id=?")//soft delete
+@SQLDelete(sql= "Update MOVIES SET deleted = true WHERE id=?")//soft delete
 @Where(clause= "deleted=false")
 
 public class EntityMovie {
@@ -29,25 +27,27 @@ public class EntityMovie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imagen;
+    private String image;
 
-    private String titulo;
+    private String title;
 
-    @Column(name="FECHA_CREACION")
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private String fechaCreacion;
+    @Column(name="CREATION_DATE")
+    @DateTimeFormat(pattern = "yyyy/MM/dd")
+    private LocalDate creationDate;
 
-    private int calificacion;
+    private int score;
 
     private boolean deleted= Boolean.FALSE;
 
-    @ManyToOne()
-   @JoinColumn(name= "id_genero")
+   // @ManyToOne()
+   //@JoinColumn(name= "GENDER_ID",insertable = false,updatable = false)
 
-    private EntityGender gender;
+     @ManyToOne
+     @JoinColumn(name = "gender_id", insertable = false,updatable = false)
+     private EntityGender gender;
 
-   // @Column(name= "id_genero",nullable = false)
-   private Long idgenero;
+  @Column(name= "gender_id",nullable = false)
+   private Long genderId;
 
     @ManyToMany(
             cascade = {
@@ -55,10 +55,11 @@ public class EntityMovie {
             CascadeType.MERGE
             })
 
-    @JoinTable(name="PERSONAJE_EN_PELICULAS",
-                joinColumns = @JoinColumn(name= "ID_PELICULAS"),
-                inverseJoinColumns = @JoinColumn(name= "ID_PERSONAJE"))
-    private List<EntityPersonage> personages = new ArrayList<>();
+    @JoinTable(name="PERSONAGES_MOVIE",
+                joinColumns = @JoinColumn(name= "MOVIE_ID"),
+                inverseJoinColumns = @JoinColumn(name= "PERSONAGE_ID"))
+    private Set<EntityPersonage> personages = new HashSet<>();
+
 
     public void removePersonage(EntityPersonage personage){
         this.personages.remove(personage);
@@ -67,6 +68,10 @@ public class EntityMovie {
         this.personages.add(personage);
     }
 
-
-
+    @Override
+    public String toString() {
+        return "EntityMovie{" +
+                "creationDate=" + creationDate +
+                '}';
+    }
 }

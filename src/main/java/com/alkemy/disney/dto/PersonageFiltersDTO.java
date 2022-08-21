@@ -9,23 +9,17 @@ import java.util.Set;
 public class PersonageFiltersDTO {
     private String name;
     private Long age;
-    private Long weight;
+    private Double weight;
 
-    private Set<Long> movies;
-    private String order;
+    private Set<Long> moviesId;
 
-    public PersonageFiltersDTO(String name, Long age, Long weight, Set<Long> movies, String order) {
+
+    public PersonageFiltersDTO(String name, Long age, Double weight, Set<Long> moviesId) {
         this.name = name;
         this.age = age;
         this.weight = weight;
-        this.movies = movies;
-        this.order = order;
+        this.moviesId = moviesId;
+
     }
 
-    public boolean isASC(){
-        return this.order.compareToIgnoreCase("ASC")== 0;
-    }
-    public  boolean isDESC(){
-        return this.order.compareToIgnoreCase("DESC")== 0;
-    }
 }

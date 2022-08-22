@@ -35,7 +35,6 @@ public class MovieSpecification {
                 predicates.add(
 
                         criteriaBuilder.equal(root.get("genderId"),genderId
-                                //"%" + filtersDTO.getGenderId() + "%")
 
                 ));
             }

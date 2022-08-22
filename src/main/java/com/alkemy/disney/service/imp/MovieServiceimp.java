@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.alkemy.disney.mapper.MovieMapper.formatter;
+//import static com.alkemy.disney.mapper.MovieMapper.formatter;
 
 @Service
 
@@ -61,8 +61,8 @@ public class MovieServiceimp implements MovieService {
         return movieMapper.MovieEntityToDto(entity,true);
     }
 
-    public List<MovieBasicDTO> getByFilters(String title, Long genderId, String order){
-        MovieFiltersDTO filtersDTO= new MovieFiltersDTO(title, genderId,order);
+    public List<MovieBasicDTO> getByFilters(String title, Long genderId,String creationDate){
+        MovieFiltersDTO filtersDTO= new MovieFiltersDTO(title, genderId,creationDate);
         List<EntityMovie> entities = movieRepository.findAll(this.movieSpecification.getByFilters(filtersDTO));
         List<MovieBasicDTO> basicDto= movieMapper.MovieEntitySetToBasicDtoList(entities);
 
@@ -83,13 +83,8 @@ public class MovieServiceimp implements MovieService {
         return result;
     }
 
-    @Override
-    public List<MovieBasicDTO> getAll() {
-      List<EntityMovie> entities=movieRepository.findAll();
-      List<MovieBasicDTO> movieBasicDTOS= movieMapper.MovieEntitySetToBasicDtoList(entities);
 
-      return movieBasicDTOS;
-    }
+
 
     public void delete(Long id){
         EntityMovie movie = getMovieEntityById(id);
@@ -121,19 +116,12 @@ public class MovieServiceimp implements MovieService {
 
         }
 
-       // movieMapper.StringToLocalDate(movieDTO.getCreationDate());
 
-        /* if(String.valueOf(LocalDate.parse(movieDTO.getCreationDate()))==null){
-            movie.setCreationDate(LocalDate.parse(String.valueOf(movie.getCreationDate())));
+        if(!StringUtils.hasLength(movieDTO.getCreationDate())){
+            movie.setCreationDate(movie.getCreationDate());
         }else{
-            movie.setCreationDate(movieMapper.StringToLocalDate(movieDTO.getCreationDate()));
+            movie.setCreationDate(this.movieMapper.StringToLocalDate(movieDTO.getCreationDate()));
         }
-
-         */
-
-
-
-
 
         movieRepository.save(movie);
         return movieMapper.MovieEntityToDto(movie, true);

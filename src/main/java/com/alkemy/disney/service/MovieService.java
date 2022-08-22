@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface MovieService {
 
-   List<MovieBasicDTO> getByFilters( String title,Long genderId,String order);
+   List<MovieBasicDTO> getByFilters( String title,Long genderId,String creationDate);
 
    MovieDTO save(MovieDTO movieDTO);
 
-   List<MovieBasicDTO> getAll();
+
 
     MovieDTO getDetailsById(Long id);
 

@@ -22,13 +22,13 @@ public class MovieMapper {
 
     private MovieRepository movieRepository;
 
-    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
 
     public MovieBasicDTO MovieEntityToBasicDto(EntityMovie entity) {
         MovieBasicDTO dto = new MovieBasicDTO();
         dto.setImage(entity.getImage());
         dto.setTitle(entity.getTitle());
-        dto.setCreationDate(entity.getCreationDate());
+        dto.setCreationDate(String.valueOf(entity.getCreationDate()));
         return dto;
     }
 
@@ -49,7 +49,7 @@ public class MovieMapper {
         entityMovie.setTitle(dto.getTitle());
         entityMovie.setImage(dto.getImage());
         entityMovie.setGenderId(dto.getGenderId());
-        entityMovie.setCreationDate(LocalDate.parse(dto.getCreationDate(),formatter));
+        entityMovie.setCreationDate(this.StringToLocalDate(dto.getCreationDate()));
         entityMovie.setScore(dto.getScore());
         entityMovie.setGender(dto.getGender());
         for (PersonageDTO personageDTO : dto.getPersonages()) {
@@ -69,7 +69,7 @@ public class MovieMapper {
         dto.setTitle(entityMovie.getTitle());
         dto.setImage(entityMovie.getImage());
         dto.setGenderId(entityMovie.getGenderId());
-        dto.setCreationDate((entityMovie.getCreationDate().toString()));
+        dto.setCreationDate(String.valueOf((entityMovie.getCreationDate())));
         dto.setScore(entityMovie.getScore());
         dto.setGender(entityMovie.getGender());
 
@@ -99,6 +99,11 @@ public class MovieMapper {
         return dtos;
     }
     */
+   public LocalDate StringToLocalDate (String stringDate) {
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+       LocalDate date = LocalDate.parse(stringDate, formatter);
+       return date;
+   }
 
 }
 

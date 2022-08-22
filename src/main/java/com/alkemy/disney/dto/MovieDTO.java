@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
@@ -20,7 +21,8 @@ public class MovieDTO {
     private String image;
 
     private String title;
-    //@DateTimeFormat(pattern = "yyyy/MM/dd")
+
+    @Pattern(regexp ="\\d{4}-\\d{2}-\\d{2}" , message= "El formato de fecha debe ser yyyy-MM-dd" )
     private String creationDate;
 
     private Integer score;

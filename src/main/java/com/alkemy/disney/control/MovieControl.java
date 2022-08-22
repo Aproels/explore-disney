@@ -7,7 +7,7 @@ import com.alkemy.disney.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,16 +19,7 @@ public class MovieControl {
     @Autowired
     private MovieService movieService;
 
-/*
-    @GetMapping
-    public ResponseEntity <List<MovieBasicDTO>> getAll(){
 
-        List<MovieBasicDTO> basicDto=movieService.getAll();
-
-        return ResponseEntity.ok(basicDto);
-
-    }
-*/
 
     @GetMapping("/{id}")
     public ResponseEntity<MovieDTO> getDetailsById(@Valid @PathVariable Long id){
@@ -43,9 +34,10 @@ public class MovieControl {
 
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long genderId,
-            @RequestParam(required = false, defaultValue = "ASC") String order
+            @RequestParam(required = false, defaultValue = "ASC") String creationDate
+           // @RequestParam(required = false, defaultValue = "ASC") String order
     ) {
-        List<MovieBasicDTO> movies = movieService.getByFilters(title, genderId, order);
+        List<MovieBasicDTO> movies = movieService.getByFilters(title, genderId,creationDate);
         return ResponseEntity.ok(movies);
 
     }

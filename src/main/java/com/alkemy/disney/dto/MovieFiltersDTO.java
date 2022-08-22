@@ -15,28 +15,28 @@ public class MovieFiltersDTO {
 
     private String title;
 
-
+    private String creationDate;
 
 
     private  Long genderId;
 
-    private String order;
 
-    public MovieFiltersDTO(String title, Long genderId, String order) {
+
+    public MovieFiltersDTO(String title, Long genderId,String creationDate) {
 
         this.title = title;
         this.genderId = genderId;
-        this.order = order;
 
+        this.creationDate=creationDate;
     }
 
     public boolean isASC() {
 
-        return this.order.compareToIgnoreCase("ASC") == 0;
+        return this.creationDate.compareToIgnoreCase("ASC") == 0;
     }
 
     public boolean isDESC() {
-        return this.order.compareToIgnoreCase("DESC") == 0;
+        return this.creationDate.compareToIgnoreCase("DESC") == 0;
 
     }
 }

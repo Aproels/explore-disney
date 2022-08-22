@@ -14,7 +14,7 @@ public class MovieBasicDTO {
 
     private String title;
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private LocalDate creationDate;
+    private String creationDate;
     private String image;
 
 }
